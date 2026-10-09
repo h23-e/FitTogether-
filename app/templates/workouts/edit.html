@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Edit {{ workout.name }} - FitTogether{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0">✏️ Edit Workout</h2>
+                    <a href="{{ url_for('workouts.view_workout', workout_id=workout.id) }}"
+                       class="btn btn-sm btn-outline-secondary">Cancel</a>
+                </div>
+
+                <form method="POST"
+                      action="{{ url_for('workouts.edit_workout', workout_id=workout.id) }}">
+
+                    <!-- ==================== SESSION INFO ==================== -->
+                    <h5 class="border-bottom pb-2 mb-3">📋 Workout Details</h5>
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="name" class="form-label">Workout Name *</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   value="{{ workout.name }}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="duration" class="form-label">Total Duration (min)</label>
+                            <input type="number" class="form-control" id="duration" name="duration"
+                                   value="{{ workout.duration }}" min="0">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Session Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="2">{{ workout.notes }}</textarea>
+                    </div>
+
+                    <!-- ==================== VISIBILITY (NEW!) ==================== -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_public"
+                               name="is_public" {% if workout.is_public %}checked{% endif %}>
+                        <label class="form-check-label" for="is_public">
+                            🌍 Make this workout public
+                        </label>
+                        <div class="form-text">
+                            Public workouts appear on your profile. Uncheck to keep it private.
+                        </div>
+                    </div>
+
+                    <!-- ==================== EXERCISES ==================== -->
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">🏋️ Exercises</h5>
+
+                    <div id="exercises-container">
+                        {% for exercise in workout.exercises %}
+                            <div class="card mb-3 p-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong>Exercise #{{ loop.index }}</strong>
+                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                            onclick="this.closest('.card').remove()">Remove ✖</button>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        <label class="form-label small">Exercise Name *</label>
+                                        <input type="text" class="form-control form-control-sm"
+                                               name="exercise_name[]" value="{{ exercise.name }}" required>
+                                    </div>
+                                    <div class="col-md-2 mb-2">
+                                        <label class="form-label small">Sets</label>
+                                        <input type="number" class="form-control form-control-sm"
+                                               name="exercise_sets[]" value="{{ exercise.sets or '' }}" min="0">
+                                    </div>
+                                    <div class="col-md-2 mb-2">
+                                        <label class="form-label small">Reps</label>
+                                        <input type="number" class="form-control form-control-sm"
+                                               name="exercise_reps[]" value="{{ exercise.reps or '' }}" min="0">
+                                    </div>
+                                    <div class="col-md-2 mb-2">
+                                        <label class="form-label small">Weight (kg)</label>
+                                        <input type="number" class="form-control form-control-sm"
+                                               name="exercise_weight[]" value="{{ exercise.weight or '' }}"
+                                               step="0.5" min="0">
+                                    </div>
+                                    <div class="col-md-2 mb-2">
+                                        <label class="form-label small">Duration (min)</label>
+                                        <input type="number" class="form-control form-control-sm"
+                                               name="exercise_duration[]" value="{{ exercise.duration or '' }}" min="0">
+                                    </div>
+                                    <div class="col-md-2 mb-2">
+                                        <label class="form-label small">Distance (km)</label>
+                                        <input type="number" class="form-control form-control-sm"
+                                               name="exercise_distance[]" value="{{ exercise.distance or '' }}"
+                                               step="0.1" min="0">
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <button type="button" class="btn btn-outline-primary mb-3" onclick="addExercise()">
+                        ➕ Add Exercise
+                    </button>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Save Changes 💾
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+    function addExercise() {
+        const container = document.getElementById('exercises-container');
+        const count = container.children.length + 1;
+
+        const row = document.createElement('div');
+        row.className = 'card mb-3 p-3 bg-light';
+        row.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong>Exercise #${count}</strong>
+                <button type="button" class="btn btn-sm btn-outline-danger"
+                        onclick="this.closest('.card').remove()">Remove ✖</button>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-2">
+                    <label class="form-label small">Exercise Name *</label>
+                    <input type="text" class="form-control form-control-sm"
+                           name="exercise_name[]" placeholder="e.g., Bench Press" required>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">Sets</label>
+                    <input type="number" class="form-control form-control-sm"
+                           name="exercise_sets[]" min="0" placeholder="3">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">Reps</label>
+                    <input type="number" class="form-control form-control-sm"
+                           name="exercise_reps[]" min="0" placeholder="10">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">Weight (kg)</label>
+                    <input type="number" class="form-control form-control-sm"
+                           name="exercise_weight[]" step="0.5" min="0" placeholder="60">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">Duration (min)</label>
+                    <input type="number" class="form-control form-control-sm"
+                           name="exercise_duration[]" min="0" placeholder="20">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">Distance (km)</label>
+                    <input type="number" class="form-control form-control-sm"
+                           name="exercise_distance[]" step="0.1" min="0" placeholder="5">
+                </div>
+            </div>
+        `;
+        container.appendChild(row);
+    }
+</script>
+{% endblock %}

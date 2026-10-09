@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }} - FitTogether{% endblock %}
+
+{% block content %}
+
+<!-- ==================== PROFILE HEADER ==================== -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex align-items-center">
+
+            <div class="avatar-circle rounded-circle me-4"
+                 style="width: 100px; height: 100px; font-size: 3rem;">
+                {{ user.username[0]|upper }}
+            </div>
+
+            <div class="flex-grow-1">
+                <h2 class="mb-1">
+                    {{ user.username }}
+                    {% if is_owner %}
+                        <span class="badge bg-secondary">You</span>
+                    {% endif %}
+                </h2>
+
+                {% if user.bio %}
+                    <p class="text-muted mb-2">{{ user.bio }}</p>
+                {% else %}
+                    <p class="text-muted fst-italic mb-2">No bio yet.</p>
+                {% endif %}
+
+                <small class="text-muted">
+                    📅 Member since {{ user.created_at.strftime('%B %Y') }}
+                </small>
+            </div>
+
+            <div class="text-end">
+                {% if is_owner %}
+                    <a href="{{ url_for('workouts.history') }}" class="btn btn-outline-primary">
+                        📋 My Workouts
+                    </a>
+                {% elif current_user.is_authenticated %}
+                    {% if is_following %}
+                        <form method="POST" action="{{ url_for('social.unfollow', username=user.username) }}" class="d-inline">
+                            <input type="hidden" name="next" value="{{ url_for('social.profile', username=user.username) }}">
+                            <button type="submit" class="btn btn-outline-secondary">
+                                Unfollow
+                            </button>
+                        </form>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('social.follow', username=user.username) }}" class="d-inline">
+                            <input type="hidden" name="next" value="{{ url_for('social.profile', username=user.username) }}">
+                            <button type="submit" class="btn btn-primary">
+                                + Follow
+                            </button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary">
+                        Sign Up to Follow
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== STATS ==================== -->
+<div class="row mb-4">
+    <div class="col-md mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <div class="stat-number">{{ total_workouts }}</div>
+                <div class="stat-label">Workouts</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <div class="stat-number">{{ total_volume }}</div>
+                <div class="stat-label">Volume (kg)</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md mb-3">
+        <a href="{{ url_for('social.following', username=user.username) }}" class="text-decoration-none">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="stat-number">{{ following_count }}</div>
+                    <div class="stat-label">Following</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md mb-3">
+        <a href="{{ url_for('social.followers', username=user.username) }}" class="text-decoration-none">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="stat-number">{{ follower_count }}</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <div class="stat-number" style="font-size: 1.25rem;">
+                    {{ fav_exercise or '—' }}
+                </div>
+                <div class="stat-label">Favorite</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== PERSONAL RECORDS (only for owner) ==================== -->
+{% if is_owner and personal_records %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">🏆 Personal Records</h5>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Exercise</th>
+                            <th class="text-end">Best Weight</th>
+                            <th class="text-end">Achieved On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in personal_records %}
+                            <tr>
+                                <td><strong>{{ record.name }}</strong></td>
+                                <td class="text-end">{{ record.weight }} kg</td>
+                                <td class="text-end text-muted">
+                                    {{ record.date.strftime('%B %d, %Y') }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+<!-- ==================== PROGRESS CHART (owner only) ==================== -->
+{% if is_owner and weekly_volume %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">📈 Weekly Volume (Last 8 Weeks)</h5>
+
+            <div style="position: relative; height: 300px;">
+                <canvas id="volumeChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        const volumeData = {
+            labels: [
+                {% for point in weekly_volume %}
+                    "{{ point.week_start }}",
+                {% endfor %}
+            ],
+            datasets: [{
+                label: 'Volume (kg)',
+                data: [
+                    {% for point in weekly_volume %}
+                        {{ point.volume }},
+                    {% endfor %}
+                ],
+                borderColor: '#FF6B35',
+                backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                borderWidth: 3,
+                tension: 0.3,
+                fill: true,
+                pointRadius: 5,
+                pointBackgroundColor: '#FF6B35',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+            }]
+        };
+
+        const ctx = document.getElementById('volumeChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: volumeData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y + ' kg';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value + ' kg';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+{% endif %}
+
+<!-- ==================== RECENT WORKOUTS ==================== -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>
+        {% if is_owner %}
+            📋 My Recent Workouts
+        {% else %}
+            📋 Public Workouts
+        {% endif %}
+    </h4>
+
+    {% if is_owner %}
+        <a href="{{ url_for('workouts.log_workout') }}" class="btn btn-primary btn-sm">
+            + Log New
+        </a>
+    {% endif %}
+</div>
+
+{% if workouts %}
+    {% for workout in workouts %}
+        <div class="workout-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h5 class="mb-1">💪 {{ workout.name }}</h5>
+                    <small class="text-muted">
+                        📅 {{ workout.date.strftime('%B %d, %Y') }}
+                    </small>
+                </div>
+
+                <div>
+                    {% if workout.is_public %}
+                        <span class="badge bg-success">🌍 Public</span>
+                    {% else %}
+                        <span class="badge bg-dark">🔒 Private</span>
+                    {% endif %}
+
+                    <a href="{{ url_for('workouts.view_workout', workout_id=workout.id) }}"
+                       class="btn btn-sm btn-outline-primary ms-2">View</a>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <span class="badge bg-secondary me-2">
+                    🏋️ {{ workout.exercises|length }} exercise{{ 's' if workout.exercises|length != 1 else '' }}
+                </span>
+                {% if workout.duration %}
+                    <span class="badge bg-secondary me-2">⏱️ {{ workout.duration }} min</span>
+                {% endif %}
+                <span class="badge bg-secondary me-2">
+                    ❤️ {{ workout.like_count() }}
+                </span>
+                <span class="badge bg-secondary">
+                    💬 {{ workout.comments|length }}
+                </span>
+            </div>
+        </div>
+    {% endfor %}
+
+{% else %}
+    <div class="empty-state">
+        <h3>No workouts to show</h3>
+        {% if is_owner %}
+            <p class="text-muted">Log your first workout to get started!</p>
+            <a href="{{ url_for('workouts.log_workout') }}" class="btn btn-primary">Log Workout</a>
+        {% else %}
+            <p class="text-muted">{{ user.username }} hasn't made any workouts public yet.</p>
+        {% endif %}
+    </div>
+{% endif %}
+
+{% endblock %}

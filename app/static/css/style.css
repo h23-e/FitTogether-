@@ -1,0 +1,473 @@
+/* =================================================================
+   FITTOGETHER — MAIN STYLESHEET
+   A modern, energetic design system for a social fitness app.
+   ================================================================= */
+
+/* ==================== ROOT VARIABLES ==================== */
+:root {
+    --ft-primary: #FF6B35;
+    --ft-primary-dark: #E85A2A;
+    --ft-secondary: #3766a4;
+    --ft-secondary-dark: #151a2e;
+    --ft-accent: #4ECDC4;
+    --ft-bg: #F7F9FC;
+    --ft-card: #FFFFFF;
+    --ft-text: #2c345e;
+    --ft-muted: #7F8C8D;
+    --ft-success: #27AE60;
+    --ft-danger: #E74C3C;
+    --ft-shadow-sm: 0 2px 8px rgba(45, 64, 89, 0.08);
+    --ft-shadow-md: 0 6px 20px rgba(45, 64, 89, 0.12);
+    --ft-shadow-lg: 0 12px 32px rgba(45, 64, 89, 0.16);
+    --ft-radius: 14px;
+}
+
+/* ==================== GLOBAL ==================== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #fffdfb;
+    color: var(--ft-text);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+main {
+    padding-bottom: 3rem;
+}
+
+/* ==================== NAVBAR ==================== */
+.navbar {
+    background: linear-gradient(135deg, var(--ft-secondary-dark) 0%, #1A2D47 100%) !important;
+    box-shadow: var(--ft-shadow-md);
+    padding: 0.85rem 0;
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+    color: #fff !important;
+    transition: transform 0.2s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.03);
+}
+
+.navbar .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: 8px;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.navbar .nav-link:hover {
+    color: #fff !important;
+    background: rgba(255, 107, 53, 0.18);
+}
+
+/* ==================== TYPOGRAPHY ==================== */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--ft-text);
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+
+.display-4 {
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+p {
+    color: var(--ft-text);
+}
+
+.text-muted {
+    color: var(--ft-muted) !important;
+}
+
+/* ==================== LINKS ==================== */
+a {
+    color: var(--ft-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--ft-primary-dark);
+    text-decoration: none;
+}
+
+/* ==================== BUTTONS ==================== */
+.btn {
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 0.55rem 1.25rem;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--ft-primary) 0%, var(--ft-primary-dark) 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: linear-gradient(135deg, var(--ft-primary-dark) 0%, #D14A1F 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4);
+}
+
+.btn-outline-primary {
+    color: var(--ft-primary);
+    border: 2px solid var(--ft-primary);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--ft-primary);
+    border-color: var(--ft-primary);
+    transform: translateY(-1px);
+}
+
+.btn-outline-danger {
+    color: var(--ft-danger);
+    border: 2px solid var(--ft-danger);
+    background: transparent;
+}
+
+.btn-outline-danger:hover {
+    background: var(--ft-danger);
+    border-color: var(--ft-danger);
+    color: #fff;
+}
+
+.btn-outline-secondary {
+    color: var(--ft-secondary);
+    border: 2px solid var(--ft-secondary);
+    background: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background: var(--ft-secondary);
+    border-color: var(--ft-secondary);
+    color: #fff;
+}
+
+.btn-lg {
+    padding: 0.85rem 2rem;
+    font-size: 1.05rem;
+}
+
+/* ==================== CARDS ==================== */
+.card {
+    border: none;
+    border-radius: var(--ft-radius);
+    box-shadow: var(--ft-shadow-sm);
+    background: var(--ft-card);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ft-shadow-md);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card-title {
+    color: var(--ft-text);
+    font-weight: 700;
+}
+
+/* Stat card variant — used on dashboard and profile */
+.stat-number {
+    font-size: 2.25rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--ft-primary) 0%, var(--ft-primary-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+}
+
+.stat-label {
+    color: var(--ft-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+
+/* ==================== BADGES ==================== */
+.badge {
+    padding: 0.4em 0.75em;
+    font-weight: 600;
+    border-radius: 6px;
+    letter-spacing: 0.2px;
+}
+
+.badge.bg-secondary {
+    background-color: #E4EAF4 !important;
+    color: var(--ft-secondary-dark) !important;
+}
+
+.badge.bg-success {
+    background: linear-gradient(135deg, #2ECC71 0%, #27AE60 100%) !important;
+}
+
+.badge.bg-dark {
+    background: #1F2937 !important;
+}
+
+/* ==================== FORMS ==================== */
+.form-control,
+.form-select {
+    border: 2px solid #E1E8F0;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    background: #fff;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--ft-primary);
+    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.12);
+    outline: none;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--ft-text);
+    margin-bottom: 0.4rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--ft-primary);
+    border-color: var(--ft-primary);
+}
+
+.form-text {
+    color: var(--ft-muted);
+    font-size: 0.85rem;
+}
+
+/* ==================== ALERTS ==================== */
+.alert {
+    border: none;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    box-shadow: var(--ft-shadow-sm);
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #E8F8F1;
+    color: #1E8449;
+    border-left: 4px solid var(--ft-success);
+}
+
+.alert-danger {
+    background: #FDEDEC;
+    color: #A93226;
+    border-left: 4px solid var(--ft-danger);
+}
+
+.alert-info {
+    background: #E8F4FB;
+    color: #21618C;
+    border-left: 4px solid var(--ft-accent);
+}
+
+/* ==================== TABLES ==================== */
+.table {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: #EEF3FA;
+    color: var(--ft-secondary-dark);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #D8E1EF;
+    padding: 0.85rem 1rem;
+}
+
+.table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-color: #EDF2F7;
+}
+
+.table-hover tbody tr:hover {
+    background: #FAFBFD;
+}
+
+/* ==================== PROFILE AVATAR ==================== */
+.avatar-circle {
+    background: linear-gradient(135deg, var(--ft-primary) 0%, var(--ft-primary-dark) 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    box-shadow: 0 4px 14px rgba(255, 107, 53, 0.35);
+}
+
+/* ==================== HERO SECTION (homepage, logged out) ==================== */
+.hero {
+    background: linear-gradient(135deg, #FFF4EE 0%, #E8F6F5 100%);
+    border-radius: 20px;
+    padding: 4rem 2rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 107, 53, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    bottom: -50%;
+    left: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(63, 103, 154, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ==================== FEATURE CARDS (logged out) ==================== */
+.feature-card {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: #fff;
+    border-radius: var(--ft-radius);
+    box-shadow: var(--ft-shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--ft-shadow-md);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+/* ==================== WORKOUT CARDS ==================== */
+.workout-card {
+    background: #fff;
+    border-radius: var(--ft-radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--ft-shadow-sm);
+    border-left: 4px solid var(--ft-primary);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.workout-card:hover {
+    transform: translateX(4px);
+    box-shadow: var(--ft-shadow-md);
+}
+
+/* ==================== EXERCISE ROWS (dynamic forms) ==================== */
+#exercises-container .card {
+    background: #FAFBFD;
+    border: 2px dashed #E1E8F0;
+    box-shadow: none;
+}
+
+#exercises-container .card:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--ft-primary);
+}
+
+/* ==================== EMPTY STATES ==================== */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #fff;
+    border-radius: var(--ft-radius);
+    box-shadow: var(--ft-shadow-sm);
+}
+
+.empty-state h3 {
+    color: var(--ft-secondary);
+    margin-bottom: 0.5rem;
+}
+
+/* ==================== FOOTER ==================== */
+.ft-footer {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--ft-muted);
+    font-size: 0.9rem;
+    margin-top: 3rem;
+    border-top: 1px solid #E1E8F0;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+
+    .hero {
+        padding: 3rem 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 1.75rem;
+    }
+
+    .navbar .nav-link {
+        padding: 0.5rem 0.75rem !important;
+    }
+}
+
+
+/* ==================== LIKE BUTTON ==================== */
+.btn-link:hover {
+    transform: scale(1.05);
+    transition: transform 0.15s ease;
+}

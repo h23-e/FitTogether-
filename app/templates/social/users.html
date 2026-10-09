@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Discover Users - FitTogether{% endblock %}
+
+{% block content %}
+
+<!-- ==================== HEADER ==================== -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>👥 Discover Users</h2>
+</div>
+
+<!-- ==================== SEARCH FORM ==================== -->
+<form method="GET" action="{{ url_for('social.users') }}" class="mb-4">
+    <div class="input-group">
+        <input type="text" class="form-control" name="q"
+               value="{{ search_query }}"
+               placeholder="Search by username...">
+        <button type="submit" class="btn btn-primary">🔍 Search</button>
+
+        {% if search_query %}
+            <a href="{{ url_for('social.users') }}" class="btn btn-outline-secondary">
+                Clear
+            </a>
+        {% endif %}
+    </div>
+    <small class="form-text text-muted">
+        Case-insensitive. Searches partial matches too (e.g. "jo" finds "john").
+    </small>
+</form>
+
+<!-- ==================== RESULTS COUNT ==================== -->
+<p class="text-muted">
+    {% if search_query %}
+        Found {{ total_users }} user{{ 's' if total_users != 1 else '' }} matching "{{ search_query }}".
+    {% else %}
+        Showing {{ total_users }} user{{ 's' if total_users != 1 else '' }}.
+    {% endif %}
+</p>
+
+<!-- ==================== USER GRID ==================== -->
+{% if user_data %}
+    <div class="row">
+        {% for entry in user_data %}
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="avatar-circle rounded-circle me-3"
+                                 style="width: 60px; height: 60px; font-size: 1.75rem;">
+                                {{ entry.user.username[0]|upper }}
+                            </div>
+
+                            <div>
+                                <h5 class="card-title mb-0">
+                                    {{ entry.user.username }}
+                                    {% if entry.user.id == current_user.id %}
+                                        <span class="badge bg-secondary">You</span>
+                                    {% endif %}
+                                </h5>
+                                <small class="text-muted">
+                                    📅 {{ entry.user.created_at.strftime('%B %Y') }}
+                                </small>
+                            </div>
+                        </div>
+
+                        {% if entry.user.bio %}
+                            <p class="card-text small text-muted">
+                                {{ entry.user.bio[:80] }}{% if entry.user.bio|length > 80 %}...{% endif %}
+                            </p>
+                        {% else %}
+                            <p class="card-text small text-muted fst-italic">No bio yet.</p>
+                        {% endif %}
+
+                        <span class="badge bg-secondary">
+                            🏋️ {{ entry.public_workouts }} public workout{{ 's' if entry.public_workouts != 1 else '' }}
+                        </span>
+
+                    </div>
+
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('social.profile', username=entry.user.username) }}"
+                               class="btn btn-outline-primary btn-sm flex-fill">
+                                View Profile
+                            </a>
+
+                            {% if entry.user.id != current_user.id %}
+                                {% if entry.is_following %}
+                                    <form method="POST"
+                                          action="{{ url_for('social.unfollow', username=entry.user.username) }}"
+                                          class="flex-fill">
+                                        <input type="hidden" name="next" value="{{ request.full_path }}">
+                                        <button type="submit" class="btn btn-outline-secondary btn-sm w-100">
+                                            Unfollow
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form method="POST"
+                                          action="{{ url_for('social.follow', username=entry.user.username) }}"
+                                          class="flex-fill">
+                                        <input type="hidden" name="next" value="{{ request.full_path }}">
+                                        <button type="submit" class="btn btn-primary btn-sm w-100">
+                                            + Follow
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% else %}
+    <div class="empty-state">
+        <h3>No users found 🔍</h3>
+        {% if search_query %}
+            <p class="text-muted">No users match "{{ search_query }}". Try a different search.</p>
+            <a href="{{ url_for('social.users') }}" class="btn btn-primary">Show All Users</a>
+        {% else %}
+            <p class="text-muted">No other users yet. Invite your friends!</p>
+        {% endif %}
+    </div>
+{% endif %}
+
+{% endblock %}

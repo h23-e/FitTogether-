@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if list_type == 'following' %}
+        {{ profile_user.username }} is following - FitTogether
+    {% else %}
+        {{ profile_user.username }}'s followers - FitTogether
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<!-- ==================== HEADER ==================== -->
+<div class="mb-4">
+    <a href="{{ url_for('social.profile', username=profile_user.username) }}" class="text-decoration-none">
+        ← Back to {{ profile_user.username }}'s Profile
+    </a>
+
+    <h2 class="mt-3 mb-1">
+        {% if list_type == 'following' %}
+            👥 {{ profile_user.username }} is following
+        {% else %}
+            👥 {{ profile_user.username }}'s followers
+        {% endif %}
+    </h2>
+
+    <p class="text-muted">
+        {{ total }} {{ 'user' if total == 1 else 'users' }}
+    </p>
+</div>
+
+<!-- ==================== USER LIST ==================== -->
+{% if users %}
+    <div class="row">
+        {% for u in users %}
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body">
+
+                        <div class="d-flex align-items-center mb-3">
+                            <a href="{{ url_for('social.profile', username=u.username) }}"
+                               class="text-decoration-none">
+                                <div class="avatar-circle rounded-circle me-3"
+                                     style="width: 55px; height: 55px; font-size: 1.5rem;">
+                                    {{ u.username[0]|upper }}
+                                </div>
+                            </a>
+
+                            <div>
+                                <h6 class="mb-0">
+                                    <a href="{{ url_for('social.profile', username=u.username) }}"
+                                       class="text-decoration-none">
+                                        {{ u.username }}
+                                    </a>
+
+                                    {% if u.id == current_user.id %}
+                                        <span class="badge bg-secondary">You</span>
+                                    {% endif %}
+                                </h6>
+                                <small class="text-muted">
+                                    📅 {{ u.created_at.strftime('%B %Y') }}
+                                </small>
+                            </div>
+                        </div>
+
+                        {% if u.bio %}
+                            <p class="card-text small text-muted">
+                                {{ u.bio[:80] }}{% if u.bio|length > 80 %}...{% endif %}
+                            </p>
+                        {% else %}
+                            <p class="card-text small text-muted fst-italic">No bio yet.</p>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="card-footer bg-transparent">
+                        {% if u.id != current_user.id %}
+
+                            {% if current_user.is_following(u) %}
+                                <form method="POST"
+                                      action="{{ url_for('social.unfollow', username=u.username) }}">
+                                    <input type="hidden" name="next" value="{{ request.full_path }}">
+                                    <button type="submit"
+                                            class="btn btn-outline-secondary btn-sm w-100">
+                                        Unfollow
+                                    </button>
+                                </form>
+                            {% else %}
+                                <form method="POST"
+                                      action="{{ url_for('social.follow', username=u.username) }}">
+                                    <input type="hidden" name="next" value="{{ request.full_path }}">
+                                    <button type="submit"
+                                            class="btn btn-primary btn-sm w-100">
+                                        + Follow
+                                    </button>
+                                </form>
+                            {% endif %}
+
+                        {% else %}
+                            <a href="{{ url_for('social.profile', username=u.username) }}"
+                               class="btn btn-outline-primary btn-sm w-100">
+                                View My Profile
+                            </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% else %}
+    <div class="empty-state">
+        {% if list_type == 'following' %}
+            <h3>Not following anyone yet</h3>
+            <p class="text-muted">
+                {{ profile_user.username }} hasn't followed anyone yet.
+            </p>
+        {% else %}
+            <h3>No followers yet</h3>
+            <p class="text-muted">
+                {{ profile_user.username }} doesn't have any followers yet.
+            </p>
+        {% endif %}
+
+        <a href="{{ url_for('social.users') }}" class="btn btn-primary">
+            Discover Users
+        </a>
+    </div>
+{% endif %}
+
+{% endblock %}

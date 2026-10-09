@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Log Workout - FitTogether{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="text-center mb-4">💪 Log Your Workout</h2>
+                <p class="text-center text-muted">Name your session, then add each exercise you did.</p>
+
+                <form method="POST" action="{{ url_for('workouts.log_workout') }}">
+
+                    <!-- ==================== SESSION INFO ==================== -->
+                    <h5 class="border-bottom pb-2 mb-3">📋 Workout Details</h5>
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="name" class="form-label">Workout Name *</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   required placeholder="e.g., Push Day, Morning Run, Leg Day">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="duration" class="form-label">Total Duration (min)</label>
+                            <input type="number" class="form-control" id="duration" name="duration"
+                                   min="0" placeholder="60">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Session Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="2"
+                                  placeholder="How did the session feel overall?"></textarea>
+                    </div>
+
+                    <!-- ==================== VISIBILITY (NEW!) ==================== -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="is_public"
+                               name="is_public" checked>
+                        <label class="form-check-label" for="is_public">
+                            🌍 Make this workout public
+                        </label>
+                        <div class="form-text">
+                            Public workouts appear on your profile. Uncheck to keep it private.
+                        </div>
+                    </div>
+
+                    <!-- ==================== EXERCISES ==================== -->
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">🏋️ Exercises</h5>
+
+                    <div id="exercises-container">
+                        <!-- Exercise rows will be added here by JavaScript -->
+                    </div>
+
+                    <button type="button" class="btn btn-outline-primary mb-3" onclick="addExercise()">
+                        ➕ Add Exercise
+                    </button>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        Save Workout 💾
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+    let exerciseCount = 0;
+
+    function addExercise() {
+        exerciseCount++;
+        const container = document.getElementById('exercises-container');
+
+        const row = document.createElement('div');
+        row.className = 'card mb-3 p-3 bg-light';
+        row.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong>Exercise #${exerciseCount}</strong>
+                <button type="button" class="btn btn-sm btn-outline-danger"
+                        onclick="this.closest('.card').remove()">Remove ✖</button>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 mb-2">
+                    <label class="form-label small">Exercise Name *</label>
+                    <input type="text" class="form-control form-control-sm"
+                           name="exercise_name[]" placeholder="e.g., Bench Press" required>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">Sets</label>
+                    <input type="number" class="form-control form-control-sm"
+                           name="exercise_sets[]" min="0" placeholder="3">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">Reps</label>
+                    <input type="number" class="form-control form-control-sm"
+                           name="exercise_reps[]" min="0" placeholder="10">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">Weight (kg)</label>
+                    <input type="number" class="form-control form-control-sm"
+                           name="exercise_weight[]" step="0.5" min="0" placeholder="60">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">Duration (min)</label>
+                    <input type="number" class="form-control form-control-sm"
+                           name="exercise_duration[]" min="0" placeholder="20">
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">Distance (km)</label>
+                    <input type="number" class="form-control form-control-sm"
+                           name="exercise_distance[]" step="0.1" min="0" placeholder="5">
+                </div>
+            </div>
+        `;
+        container.appendChild(row);
+    }
+
+    // Start with one empty exercise row
+    addExercise();
+</script>
+{% endblock %}
