@@ -15,19 +15,21 @@
     <a href="{{ url_for('social.profile', username=profile_user.username) }}" class="text-decoration-none">
         ← Back to {{ profile_user.username }}'s Profile
     </a>
+</div>
 
-    <h2 class="mt-3 mb-1">
+<div class="section-heading-row">
+    <h2 class="section-heading">
         {% if list_type == 'following' %}
             👥 {{ profile_user.username }} is following
         {% else %}
             👥 {{ profile_user.username }}'s followers
         {% endif %}
     </h2>
-
-    <p class="text-muted">
-        {{ total }} {{ 'user' if total == 1 else 'users' }}
-    </p>
 </div>
+
+<p class="text-muted">
+    {{ total }} {{ 'user' if total == 1 else 'users' }}
+</p>
 
 <!-- ==================== USER LIST ==================== -->
 {% if users %}
@@ -111,16 +113,13 @@
 
 {% else %}
     <div class="empty-state">
+        <div class="empty-state-icon">👥</div>
         {% if list_type == 'following' %}
             <h3>Not following anyone yet</h3>
-            <p class="text-muted">
-                {{ profile_user.username }} hasn't followed anyone yet.
-            </p>
+            <p>{{ profile_user.username }} hasn't followed anyone yet. Check back soon!</p>
         {% else %}
             <h3>No followers yet</h3>
-            <p class="text-muted">
-                {{ profile_user.username }} doesn't have any followers yet.
-            </p>
+            <p>{{ profile_user.username }} doesn't have any followers yet. Be the first!</p>
         {% endif %}
 
         <a href="{{ url_for('social.users') }}" class="btn btn-primary">

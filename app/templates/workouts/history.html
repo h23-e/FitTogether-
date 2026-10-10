@@ -4,104 +4,96 @@
 
 {% block content %}
 
-<!-- ==================== HEADER ==================== -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>📋 Workout History</h2>
-    <a href="{{ url_for('workouts.log_workout') }}" class="btn btn-primary">
-        + Log New Workout
-    </a>
-</div>
+<div class="page-history-dark">
 
-{% if workouts %}
-    <p class="text-muted">
-        You have {{ total_workouts }} workout{{ 's' if total_workouts != 1 else '' }} logged.
-    </p>
-
-    {% for workout in workouts %}
-        <div class="card mb-4">
-            <div class="card-body">
-
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                        <h4 class="card-title mb-1">💪 {{ workout.name }}</h4>
-                        <small class="text-muted">
-                            📅 {{ workout.date.strftime('%B %d, %Y at %I:%M %p') }}
-                        </small>
-                    </div>
-
-                    <div>
-                        <a href="{{ url_for('workouts.view_workout', workout_id=workout.id) }}"
-                           class="btn btn-sm btn-outline-primary">View</a>
-
-                        <form method="POST"
-                              action="{{ url_for('workouts.delete_workout', workout_id=workout.id) }}"
-                              class="d-inline"
-                              onsubmit="return confirm('Delete this workout?');">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                Delete
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    {% if workout.duration %}
-                        <span class="badge bg-secondary me-2">
-                            ⏱️ {{ workout.duration }} min
-                        </span>
-                    {% endif %}
-                    <span class="badge bg-secondary me-2">
-                        🏋️ {{ workout.exercises|length }} exercise{{ 's' if workout.exercises|length != 1 else '' }}
-                    </span>
-                    <span class="badge bg-secondary me-2">
-                        ❤️ {{ workout.like_count() }}
-                    </span>
-                    <span class="badge bg-secondary me-2">
-                        💬 {{ workout.comments|length }}
-                    </span>
-
-                    {% if workout.is_public %}
-                        <span class="badge bg-success me-2">🌍 Public</span>
-                    {% else %}
-                        <span class="badge bg-dark me-2">🔒 Private</span>
-                    {% endif %}
-                </div>
-
-                {% if workout.notes %}
-                    <p class="text-muted fst-italic mb-3">"{{ workout.notes }}"</p>
-                {% endif %}
-
-                <h6 class="border-top pt-3">Exercises:</h6>
-                <ul class="list-group list-group-flush">
-                    {% for exercise in workout.exercises %}
-                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                            <div>
-                                <strong>{{ exercise.name }}</strong>
-                                <br>
-                                <small class="text-muted">
-                                    {% if exercise.sets %}{{ exercise.sets }} sets{% endif %}
-                                    {% if exercise.reps %}× {{ exercise.reps }} reps{% endif %}
-                                    {% if exercise.weight %}@ {{ exercise.weight }} kg{% endif %}
-                                    {% if exercise.duration %}• {{ exercise.duration }} min{% endif %}
-                                    {% if exercise.distance %}• {{ exercise.distance }} km{% endif %}
-                                </small>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-
-            </div>
-        </div>
-    {% endfor %}
-
-{% else %}
-    <div class="text-center py-5">
-        <h3>No workouts yet! 🏋️</h3>
-        <p class="text-muted">Start tracking your fitness journey by logging your first workout.</p>
-        <a href="{{ url_for('workouts.log_workout') }}" class="btn btn-primary btn-lg">
-            Log Your First Workout
+    <!-- HEADER -->
+    <div class="section-heading-row">
+        <h2 class="section-heading section-heading-light">📋 Workout History</h2>
+        <a href="{{ url_for('workouts.log_workout') }}" class="btn btn-primary">
+            + Log New Workout
         </a>
     </div>
-{% endif %}
+
+    {% if workouts %}
+        <p style="color: rgba(255, 255, 255, 0.75);">
+            You have {{ total_workouts }} workout{{ 's' if total_workouts != 1 else '' }} logged.
+        </p>
+
+        {% for workout in workouts %}
+            <div class="card mb-4 fade-in-up">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <h4 class="card-title mb-1">💪 {{ workout.name }}</h4>
+                            <small class="text-muted">
+                                📅 {{ workout.date.strftime('%B %d, %Y at %I:%M %p') }}
+                            </small>
+                        </div>
+                        <div>
+                            <a href="{{ url_for('workouts.view_workout', workout_id=workout.id) }}"
+                               class="btn btn-sm btn-outline-primary">View</a>
+                            <form method="POST"
+                                  action="{{ url_for('workouts.delete_workout', workout_id=workout.id) }}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Delete this workout?');">
+                                <button type="submit" class="btn btn-sm btn-ghost">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        {% if workout.duration %}
+                            <span class="badge bg-secondary me-2">⏱️ {{ workout.duration }} min</span>
+                        {% endif %}
+                        <span class="badge bg-secondary me-2">
+                            🏋️ {{ workout.exercises|length }} exercise{{ 's' if workout.exercises|length != 1 else '' }}
+                        </span>
+                        <span class="badge bg-secondary me-2">❤️ {{ workout.like_count() }}</span>
+                        <span class="badge bg-secondary me-2">💬 {{ workout.comments|length }}</span>
+                        {% if workout.is_public %}
+                            <span class="badge bg-success me-2">🌍 Public</span>
+                        {% else %}
+                            <span class="badge bg-dark me-2">🔒 Private</span>
+                        {% endif %}
+                    </div>
+
+                    {% if workout.notes %}
+                        <p class="text-muted fst-italic mb-3">"{{ workout.notes }}"</p>
+                    {% endif %}
+
+                    <h6 class="border-top pt-3">Exercises:</h6>
+                    <ul class="list-group list-group-flush">
+                        {% for exercise in workout.exercises %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <strong>{{ exercise.name }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        {% if exercise.sets %}{{ exercise.sets }} sets{% endif %}
+                                        {% if exercise.reps %}× {{ exercise.reps }} reps{% endif %}
+                                        {% if exercise.weight %}@ {{ exercise.weight }} kg{% endif %}
+                                        {% if exercise.duration %}• {{ exercise.duration }} min{% endif %}
+                                        {% if exercise.distance %}• {{ exercise.distance }} km{% endif %}
+                                    </small>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+
+    {% else %}
+        <div class="empty-state fade-in-up">
+            <div class="empty-state-icon">📋</div>
+            <h3>No workouts logged yet</h3>
+            <p>Your workout history will appear here. Log your first session to get started!</p>
+            <a href="{{ url_for('workouts.log_workout') }}" class="btn btn-primary">
+                Log Your First Workout
+            </a>
+        </div>
+    {% endif %}
+
+</div>
 
 {% endblock %}

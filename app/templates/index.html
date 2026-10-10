@@ -6,219 +6,225 @@
 
 {% if current_user.is_authenticated %}
 
-    <!-- ==================== WELCOME HEADER ==================== -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="mb-1">Welcome back, {{ current_user.username }}! 👋</h2>
-            <p class="text-muted mb-0">Ready to crush it today?</p>
-        </div>
-        <a href="{{ url_for('workouts.log_workout') }}" class="btn btn-primary btn-lg">
-            💪 Log Workout
-        </a>
-    </div>
+    <!-- ==================== HERO BAND (Welcome + Stats) ==================== -->
+    <div class="home-hero-band">
 
-    <!-- ==================== STATS ==================== -->
-    <div class="row mb-4">
-        <div class="col-md mb-3">
-            <div class="card text-center">
-                <div class="card-body">
+        <!-- WELCOME HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4 fade-in-up">
+            <div>
+                <h2 class="mb-1 band-heading">Welcome back, {{ current_user.username }}! 👋</h2>
+                <p class="mb-0 band-subtext">Ready to crush it today?</p>
+            </div>
+            <a href="{{ url_for('workouts.log_workout') }}" class="btn btn-primary btn-lg">
+                💪 Log Workout
+            </a>
+        </div>
+
+        <!-- STATS -->
+        <div class="row g-3">
+            <div class="col-6 col-md mb-0 fade-in-up stagger-1">
+                <div class="stat-card">
+                    <div class="stat-card-icon">💪</div>
                     <div class="stat-number">{{ total_workouts }}</div>
                     <div class="stat-label">Workouts</div>
                 </div>
             </div>
-        </div>
-        <div class="col-md mb-3">
-            <div class="card text-center">
-                <div class="card-body">
+            <div class="col-6 col-md mb-0 fade-in-up stagger-2">
+                <div class="stat-card">
+                    <div class="stat-card-icon">📅</div>
                     <div class="stat-number">{{ week_workouts }}</div>
                     <div class="stat-label">This Week</div>
                 </div>
             </div>
-        </div>
-        <div class="col-md mb-3">
-            <div class="card text-center">
-                <div class="card-body">
+            <div class="col-6 col-md mb-0 fade-in-up stagger-3">
+                <div class="stat-card">
+                    <div class="stat-card-icon">🏋️</div>
                     <div class="stat-number">{{ total_volume }}</div>
                     <div class="stat-label">Volume (kg)</div>
                 </div>
             </div>
+            <div class="col-6 col-md mb-0 fade-in-up stagger-4">
+                <a href="{{ url_for('social.following', username=current_user.username) }}" class="stat-card">
+                    <div class="stat-card-icon">👥</div>
+                    <div class="stat-number">{{ following_count }}</div>
+                    <div class="stat-label">Following</div>
+                </a>
+            </div>
+            <div class="col-6 col-md mb-0 fade-in-up stagger-5">
+                <a href="{{ url_for('social.followers', username=current_user.username) }}" class="stat-card">
+                    <div class="stat-card-icon">🎯</div>
+                    <div class="stat-number">{{ follower_count }}</div>
+                    <div class="stat-label">Followers</div>
+                </a>
+            </div>
         </div>
-        <div class="col-md mb-3">
-            <a href="{{ url_for('social.following', username=current_user.username) }}" class="text-decoration-none">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <div class="stat-number">{{ following_count }}</div>
-                        <div class="stat-label">Following</div>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md mb-3">
-            <a href="{{ url_for('social.followers', username=current_user.username) }}" class="text-decoration-none">
-                <div class="card text-center">
-                    <div class="card-body">
-                        <div class="stat-number">{{ follower_count }}</div>
-                        <div class="stat-label">Followers</div>
-                    </div>
-                </div>
-            </a>
-        </div>
+
     </div>
 
-    <!-- ==================== RECENT WORKOUTS ==================== -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">📋 Your Recent Workouts</h4>
-        <a href="{{ url_for('workouts.history') }}" class="btn btn-sm btn-outline-primary">
-            View All
-        </a>
-    </div>
+    <!-- ==================== MAIN CONTENT (light background) ==================== -->
+    <div class="after-hero-band">
 
-    {% if recent_workouts %}
-        {% for workout in recent_workouts %}
-            <div class="workout-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <h5 class="mb-1">💪 {{ workout.name }}</h5>
-                        <small class="text-muted">
-                            📅 {{ workout.date.strftime('%B %d, %Y') }}
-                        </small>
+        <!-- RECENT WORKOUTS -->
+        <div class="section-heading-row fade-in-up">
+            <h4 class="section-heading">📋 Your Recent Workouts</h4>
+            <a href="{{ url_for('workouts.history') }}" class="btn btn-sm btn-outline-primary">
+                View All
+            </a>
+        </div>
+
+        {% if recent_workouts %}
+            {% for workout in recent_workouts %}
+                <div class="workout-card fade-in-up">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1">💪 {{ workout.name }}</h5>
+                            <small class="text-muted">
+                                📅 {{ workout.date.strftime('%B %d, %Y') }}
+                            </small>
+                        </div>
+                        <div>
+                            {% if workout.is_public %}
+                                <span class="badge bg-success">🌍 Public</span>
+                            {% else %}
+                                <span class="badge bg-dark">🔒 Private</span>
+                            {% endif %}
+                            <a href="{{ url_for('workouts.view_workout', workout_id=workout.id) }}"
+                               class="btn btn-sm btn-outline-primary ms-2">View</a>
+                        </div>
                     </div>
-                    <div>
-                        {% if workout.is_public %}
-                            <span class="badge bg-success">🌍 Public</span>
-                        {% else %}
-                            <span class="badge bg-dark">🔒 Private</span>
+
+                    <div class="mt-2">
+                        <span class="badge bg-secondary me-2">
+                            🏋️ {{ workout.exercises|length }} exercise{{ 's' if workout.exercises|length != 1 else '' }}
+                        </span>
+                        {% if workout.duration %}
+                            <span class="badge bg-secondary me-2">⏱️ {{ workout.duration }} min</span>
                         {% endif %}
-                        <a href="{{ url_for('workouts.view_workout', workout_id=workout.id) }}"
-                           class="btn btn-sm btn-outline-primary ms-2">View</a>
+                        <span class="badge bg-secondary me-2">❤️ {{ workout.like_count() }}</span>
+                        <span class="badge bg-secondary">💬 {{ workout.comments|length }}</span>
                     </div>
                 </div>
-
-                <div class="mt-2">
-                    <span class="badge bg-secondary me-2">
-                        🏋️ {{ workout.exercises|length }} exercise{{ 's' if workout.exercises|length != 1 else '' }}
-                    </span>
-                    {% if workout.duration %}
-                        <span class="badge bg-secondary me-2">⏱️ {{ workout.duration }} min</span>
-                    {% endif %}
-                    <span class="badge bg-secondary me-2">
-                        ❤️ {{ workout.like_count() }}
-                    </span>
-                    <span class="badge bg-secondary">
-                        💬 {{ workout.comments|length }}
-                    </span>
-                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state fade-in-up">
+                <div class="empty-state-icon">🏋️</div>
+                <h3>No workouts yet</h3>
+                <p>Start tracking your fitness journey — log your first workout in under a minute.</p>
+                <a href="{{ url_for('workouts.log_workout') }}" class="btn btn-primary">
+                    Log Your First Workout
+                </a>
             </div>
-        {% endfor %}
-    {% else %}
-        <div class="empty-state">
-            <h3>No workouts yet</h3>
-            <p class="text-muted">Start tracking your fitness journey today.</p>
-            <a href="{{ url_for('workouts.log_workout') }}" class="btn btn-primary">
-                Log Your First Workout
-            </a>
-        </div>
-    {% endif %}
+        {% endif %}
 
-    <!-- ==================== COMMUNITY FEED ==================== -->
-    <div class="d-flex justify-content-between align-items-center mb-3 mt-5">
-        <h4 class="mb-0">🌍 Community Activity</h4>
-        <a href="{{ url_for('social.users') }}" class="btn btn-sm btn-outline-primary">
-            Discover Users
-        </a>
-    </div>
-
-    {% if community_workouts %}
-        {% for workout in community_workouts %}
-            <div class="workout-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <h5 class="mb-1">💪 {{ workout.name }}</h5>
-                        <small class="text-muted">
-                            by
-                            <a href="{{ url_for('social.profile', username=workout.user.username) }}">
-                                {{ workout.user.username }}
-                            </a>
-                            · 📅 {{ workout.date.strftime('%B %d, %Y') }}
-                        </small>
-                    </div>
-                    <a href="{{ url_for('workouts.view_workout', workout_id=workout.id) }}"
-                       class="btn btn-sm btn-outline-primary">View</a>
-                </div>
-
-                <div class="mt-2">
-                    <span class="badge bg-secondary me-2">
-                        🏋️ {{ workout.exercises|length }} exercise{{ 's' if workout.exercises|length != 1 else '' }}
-                    </span>
-                    {% if workout.duration %}
-                        <span class="badge bg-secondary me-2">⏱️ {{ workout.duration }} min</span>
-                    {% endif %}
-                    <span class="badge bg-secondary me-2">
-                        ❤️ {{ workout.like_count() }}
-                    </span>
-                    <span class="badge bg-secondary">
-                        💬 {{ workout.comments|length }}
-                    </span>
-                </div>
-            </div>
-        {% endfor %}
-    {% else %}
-        <div class="empty-state">
-            <h3>No community activity yet</h3>
-            <p class="text-muted">Find other athletes to see their workouts here.</p>
-            <a href="{{ url_for('social.users') }}" class="btn btn-outline-primary">
+        <!-- COMMUNITY FEED -->
+        <div class="section-heading-row mt-5 fade-in-up">
+            <h4 class="section-heading">🌍 Community Activity</h4>
+            <a href="{{ url_for('social.users') }}" class="btn btn-sm btn-outline-primary">
                 Discover Users
             </a>
         </div>
-    {% endif %}
+
+        {% if community_workouts %}
+            {% for workout in community_workouts %}
+                <div class="workout-card fade-in-up">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1">💪 {{ workout.name }}</h5>
+                            <small class="text-muted">
+                                by
+                                <a href="{{ url_for('social.profile', username=workout.user.username) }}">
+                                    {{ workout.user.username }}
+                                </a>
+                                · 📅 {{ workout.date.strftime('%B %d, %Y') }}
+                            </small>
+                        </div>
+                        <a href="{{ url_for('workouts.view_workout', workout_id=workout.id) }}"
+                           class="btn btn-sm btn-outline-primary">View</a>
+                    </div>
+
+                    <div class="mt-2">
+                        <span class="badge bg-secondary me-2">
+                            🏋️ {{ workout.exercises|length }} exercise{{ 's' if workout.exercises|length != 1 else '' }}
+                        </span>
+                        {% if workout.duration %}
+                            <span class="badge bg-secondary me-2">⏱️ {{ workout.duration }} min</span>
+                        {% endif %}
+                        <span class="badge bg-secondary me-2">❤️ {{ workout.like_count() }}</span>
+                        <span class="badge bg-secondary">💬 {{ workout.comments|length }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state fade-in-up">
+                <div class="empty-state-icon">🌍</div>
+                <h3>No community activity yet</h3>
+                <p>Find other athletes on FitTogether to see their workouts appear here.</p>
+                <a href="{{ url_for('social.users') }}" class="btn btn-outline-primary">
+                    Discover Users
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
 
 {% else %}
 
-    <!-- ==================== HERO SECTION (LOGGED OUT) ==================== -->
-    <div class="hero">
-        <h1 class="display-4 mb-3">🏋️ FitTogether</h1>
-        <p class="lead mb-4" style="font-size: 1.3rem;">
-            Get Fit. Stay Motivated. Grow Together.
-        </p>
+    <!-- HERO (LOGGED OUT) -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Built for athletes who train together
+            </div>
+            <h1 class="hero-title">
+                Get Fit.<br>
+                Stay Motivated.<br>
+                <span class="hero-title-gradient">Grow Together.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Log your workouts, track your progress, and share your journey with a community of athletes who push each other forward.
+            </p>
+            <div class="hero-actions">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">Start Training Free</a>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg">Log In</a>
+            </div>
+            <div class="hero-meta">
+                <span>✓ No credit card</span>
+                <span>✓ Free forever</span>
+                <span>✓ Ready in 30 seconds</span>
+            </div>
+        </div>
+    </section>
 
-        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg me-2">
-            Get Started
-        </a>
-        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary btn-lg">
-            Login
-        </a>
-    </div>
-
-    <!-- ==================== FEATURES ==================== -->
-    <div class="row mt-4">
-        <div class="col-md-4 mb-4">
-            <div class="feature-card">
-                <div class="feature-icon">📝</div>
-                <h5>Log Your Workouts</h5>
-                <p class="text-muted mb-0">
-                    Track every exercise, set, and rep. Build a complete history of your fitness journey.
-                </p>
+    <section class="features-section">
+        <div class="features-heading fade-in-up">
+            <h2>Everything you need to train smarter</h2>
+            <p class="text-muted">Track the work. See the progress. Share the results.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4 fade-in-up stagger-1">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap"><span class="feature-icon">📝</span></div>
+                    <h4>Log Your Workouts</h4>
+                    <p class="text-muted mb-0">Track every exercise, set, and rep. Build a complete history of your training.</p>
+                </div>
+            </div>
+            <div class="col-md-4 fade-in-up stagger-2">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap"><span class="feature-icon">📈</span></div>
+                    <h4>See Real Progress</h4>
+                    <p class="text-muted mb-0">Volume charts, personal records, and trends. Watch yourself get measurably stronger.</p>
+                </div>
+            </div>
+            <div class="col-md-4 fade-in-up stagger-3">
+                <div class="feature-card">
+                    <div class="feature-icon-wrap"><span class="feature-icon">🌍</span></div>
+                    <h4>Train Together</h4>
+                    <p class="text-muted mb-0">Follow other athletes, discover workouts, and stay motivated as a community.</p>
+                </div>
             </div>
         </div>
-        <div class="col-md-4 mb-4">
-            <div class="feature-card">
-                <div class="feature-icon">📊</div>
-                <h5>Track Your Progress</h5>
-                <p class="text-muted mb-0">
-                    See your volume, PRs, and trends over time. Watch yourself get stronger.
-                </p>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="feature-card">
-                <div class="feature-icon">🌍</div>
-                <h5>Share & Discover</h5>
-                <p class="text-muted mb-0">
-                    Make workouts public, discover other athletes, and get inspired by their routines.
-                </p>
-            </div>
-        </div>
-    </div>
+    </section>
 
 {% endif %}
 

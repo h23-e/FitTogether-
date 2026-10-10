@@ -3,113 +3,80 @@
 {% block title %}{{ workout.name }} - FitTogether{% endblock %}
 
 {% block content %}
+<div class="page-workout-view">
 
-<!-- ==================== HEADER ==================== -->
+<!-- HEADER -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         {% if is_owner %}
-            <a href="{{ url_for('workouts.history') }}" class="text-decoration-none">
-                ← Back to History
-            </a>
+            <a href="{{ url_for('workouts.history') }}" class="text-decoration-none">← Back to History</a>
         {% else %}
-            <a href="{{ url_for('social.profile', username=workout.user.username) }}"
-               class="text-decoration-none">
+            <a href="{{ url_for('social.profile', username=workout.user.username) }}" class="text-decoration-none">
                 ← Back to {{ workout.user.username }}'s Profile
             </a>
         {% endif %}
-
         <h2 class="mt-2 mb-0">💪 {{ workout.name }}</h2>
-        <small class="text-muted">
-            📅 {{ workout.date.strftime('%B %d, %Y at %I:%M %p') }}
-        </small>
-
+        <small class="text-muted">📅 {{ workout.date.strftime('%B %d, %Y at %I:%M %p') }}</small>
         {% if not is_owner %}
-            <br>
-            <small class="text-muted">
-                by
-                <a href="{{ url_for('social.profile', username=workout.user.username) }}">
-                    {{ workout.user.username }}
-                </a>
+            <br><small class="text-muted">
+                by <a href="{{ url_for('social.profile', username=workout.user.username) }}">{{ workout.user.username }}</a>
             </small>
         {% endif %}
-
         <br>
-
         {% if workout.is_public %}
             <span class="badge bg-success mt-2">🌍 Public</span>
         {% else %}
             <span class="badge bg-dark mt-2">🔒 Private</span>
         {% endif %}
     </div>
-
     {% if is_owner %}
         <div>
-            <a href="{{ url_for('workouts.edit_workout', workout_id=workout.id) }}"
-               class="btn btn-outline-primary">✏️ Edit</a>
-
-            <form method="POST"
-                  action="{{ url_for('workouts.delete_workout', workout_id=workout.id) }}"
-                  class="d-inline"
-                  onsubmit="return confirm('Delete this workout? This cannot be undone.');">
+            <a href="{{ url_for('workouts.edit_workout', workout_id=workout.id) }}" class="btn btn-outline-primary">✏️ Edit</a>
+            <form method="POST" action="{{ url_for('workouts.delete_workout', workout_id=workout.id) }}"
+                  class="d-inline" onsubmit="return confirm('Delete this workout? This cannot be undone.');">
                 <button type="submit" class="btn btn-outline-danger">🗑️ Delete</button>
             </form>
         </div>
     {% endif %}
 </div>
 
-<!-- ==================== LIKE + COMMENT BAR ==================== -->
+<!-- LIKE + COMMENT BAR -->
 <div class="card mb-4">
     <div class="card-body d-flex justify-content-between align-items-center">
-
         <div>
             {% if current_user.is_authenticated %}
                 {% if workout.is_liked_by(current_user) %}
-                    <form method="POST"
-                          action="{{ url_for('workouts.unlike_workout', workout_id=workout.id) }}"
-                          class="d-inline">
-                        <input type="hidden" name="next"
-                               value="{{ url_for('workouts.view_workout', workout_id=workout.id) }}">
-                        <button type="submit" class="btn btn-link p-0 text-decoration-none"
-                                style="font-size: 1.25rem; color: #E74C3C;">
+                    <form method="POST" action="{{ url_for('workouts.unlike_workout', workout_id=workout.id) }}" class="d-inline">
+                        <input type="hidden" name="next" value="{{ url_for('workouts.view_workout', workout_id=workout.id) }}">
+                        <button type="submit" class="btn btn-link p-0 text-decoration-none" style="font-size: 1.25rem; color: #E74C3C;">
                             ❤️ <span class="text-dark">{{ workout.like_count() }}</span>
                         </button>
                     </form>
                 {% else %}
-                    <form method="POST"
-                          action="{{ url_for('workouts.like_workout', workout_id=workout.id) }}"
-                          class="d-inline">
-                        <input type="hidden" name="next"
-                               value="{{ url_for('workouts.view_workout', workout_id=workout.id) }}">
-                        <button type="submit" class="btn btn-link p-0 text-decoration-none"
-                                style="font-size: 1.25rem;">
+                    <form method="POST" action="{{ url_for('workouts.like_workout', workout_id=workout.id) }}" class="d-inline">
+                        <input type="hidden" name="next" value="{{ url_for('workouts.view_workout', workout_id=workout.id) }}">
+                        <button type="submit" class="btn btn-link p-0 text-decoration-none" style="font-size: 1.25rem;">
                             🤍 <span class="text-dark">{{ workout.like_count() }}</span>
                         </button>
                     </form>
                 {% endif %}
             {% else %}
-                <span style="font-size: 1.25rem;">
-                    🤍 <span class="text-muted">{{ workout.like_count() }}</span>
-                </span>
+                <span style="font-size: 1.25rem;">🤍 <span class="text-muted">{{ workout.like_count() }}</span></span>
             {% endif %}
         </div>
-
         <div>
             <span style="font-size: 1.1rem;">
                 💬 <span class="text-dark">{{ comments|length }}</span>
-                <span class="text-muted">
-                    comment{{ 's' if comments|length != 1 else '' }}
-                </span>
+                <span class="text-muted">comment{{ 's' if comments|length != 1 else '' }}</span>
             </span>
         </div>
-
     </div>
 </div>
 
-<!-- ==================== SESSION SUMMARY ==================== -->
+<!-- SESSION SUMMARY -->
 <div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title">📊 Session Summary</h5>
-
         <div class="row text-center mt-3">
             <div class="col-md-4">
                 <div class="stat-number">{{ workout.exercises|length }}</div>
@@ -132,7 +99,6 @@
                 <div class="stat-label">Total Volume (kg)</div>
             </div>
         </div>
-
         {% if workout.notes %}
             <hr>
             <p class="mb-0"><strong>Session Notes:</strong> <em>"{{ workout.notes }}"</em></p>
@@ -140,11 +106,10 @@
     </div>
 </div>
 
-<!-- ==================== EXERCISE TABLE ==================== -->
-<div class="card">
+<!-- EXERCISE TABLE -->
+<div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title mb-3">🏋️ Exercises</h5>
-
         {% if workout.exercises %}
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
@@ -173,26 +138,12 @@
                                 <td>{{ exercise.sets or '—' }}</td>
                                 <td>{{ exercise.reps or '—' }}</td>
                                 <td>{{ exercise.weight or '—' }}</td>
-                                <td>
-                                    {% if exercise.duration %}
-                                        {{ exercise.duration }} min
-                                    {% else %}
-                                        —
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if exercise.distance %}
-                                        {{ exercise.distance }} km
-                                    {% else %}
-                                        —
-                                    {% endif %}
-                                </td>
+                                <td>{% if exercise.duration %}{{ exercise.duration }} min{% else %}—{% endif %}</td>
+                                <td>{% if exercise.distance %}{{ exercise.distance }} km{% else %}—{% endif %}</td>
                                 <td>
                                     {% if exercise.sets and exercise.reps and exercise.weight %}
                                         {{ (exercise.sets * exercise.reps * exercise.weight)|round(1) }}
-                                    {% else %}
-                                        —
-                                    {% endif %}
+                                    {% else %}—{% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -205,68 +156,43 @@
     </div>
 </div>
 
-<!-- ==================== COMMENTS SECTION ==================== -->
-<div class="card mt-4">
+<!-- COMMENTS -->
+<div class="card">
     <div class="card-body">
-        <h5 class="card-title mb-3">
-            💬 Comments ({{ comments|length }})
-        </h5>
-
+        <h5 class="card-title mb-3">💬 Comments ({{ comments|length }})</h5>
         {% if current_user.is_authenticated %}
-            <form method="POST"
-                  action="{{ url_for('workouts.add_comment', workout_id=workout.id) }}"
-                  class="mb-4">
+            <form method="POST" action="{{ url_for('workouts.add_comment', workout_id=workout.id) }}" class="mb-4">
                 <div class="mb-2">
-                    <textarea class="form-control"
-                              name="content"
-                              rows="2"
-                              placeholder="Write a comment..."
-                              required></textarea>
+                    <textarea class="form-control" name="content" rows="2" placeholder="Write a comment..." required></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary btn-sm">
-                    Post Comment
-                </button>
+                <button type="submit" class="btn btn-primary btn-sm">Post Comment</button>
             </form>
         {% else %}
-            <p class="text-muted">
-                <a href="{{ url_for('auth.login') }}">Log in</a> to leave a comment.
-            </p>
+            <p class="text-muted"><a href="{{ url_for('auth.login') }}">Log in</a> to leave a comment.</p>
         {% endif %}
 
         {% if comments %}
             {% for comment in comments %}
                 <div class="d-flex mb-3 pb-3 {% if not loop.last %}border-bottom{% endif %}">
-
-                    <a href="{{ url_for('social.profile', username=comment.user.username) }}"
-                       class="text-decoration-none">
-                        <div class="avatar-circle rounded-circle me-3"
-                             style="width: 45px; height: 45px; font-size: 1.2rem; flex-shrink: 0;">
+                    <a href="{{ url_for('social.profile', username=comment.user.username) }}" class="text-decoration-none">
+                        <div class="avatar-circle rounded-circle me-3" style="width: 45px; height: 45px; font-size: 1.2rem; flex-shrink: 0;">
                             {{ comment.user.username[0]|upper }}
                         </div>
                     </a>
-
                     <div class="flex-grow-1">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <a href="{{ url_for('social.profile', username=comment.user.username) }}"
-                                   class="text-decoration-none">
-                                    <strong>{{ comment.user.username }}</strong>
-                                </a>
-                                <small class="text-muted ms-2">
-                                    {{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') }}
-                                </small>
-                            </div>
-                        </div>
+                        <a href="{{ url_for('social.profile', username=comment.user.username) }}" class="text-decoration-none">
+                            <strong>{{ comment.user.username }}</strong>
+                        </a>
+                        <small class="text-muted ms-2">{{ comment.created_at.strftime('%B %d, %Y at %I:%M %p') }}</small>
                         <p class="mb-0 mt-1">{{ comment.content }}</p>
                     </div>
-
                 </div>
             {% endfor %}
         {% else %}
             <p class="text-muted mb-0">No comments yet. Be the first!</p>
         {% endif %}
-
     </div>
 </div>
 
+</div>
 {% endblock %}

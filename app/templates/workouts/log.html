@@ -3,6 +3,7 @@
 {% block title %}Log Workout - FitTogether{% endblock %}
 
 {% block content %}
+<div class="page-log-workout">
 <div class="row justify-content-center">
     <div class="col-md-10">
         <div class="card">
@@ -12,7 +13,6 @@
 
                 <form method="POST" action="{{ url_for('workouts.log_workout') }}">
 
-                    <!-- ==================== SESSION INFO ==================== -->
                     <h5 class="border-bottom pb-2 mb-3">📋 Workout Details</h5>
 
                     <div class="row">
@@ -34,46 +34,32 @@
                                   placeholder="How did the session feel overall?"></textarea>
                     </div>
 
-                    <!-- ==================== VISIBILITY (NEW!) ==================== -->
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="is_public"
-                               name="is_public" checked>
-                        <label class="form-check-label" for="is_public">
-                            🌍 Make this workout public
-                        </label>
-                        <div class="form-text">
-                            Public workouts appear on your profile. Uncheck to keep it private.
-                        </div>
+                        <input type="checkbox" class="form-check-input" id="is_public" name="is_public" checked>
+                        <label class="form-check-label" for="is_public">🌍 Make this workout public</label>
+                        <div class="form-text">Public workouts appear on your profile. Uncheck to keep it private.</div>
                     </div>
 
-                    <!-- ==================== EXERCISES ==================== -->
                     <h5 class="border-bottom pb-2 mb-3 mt-4">🏋️ Exercises</h5>
 
-                    <div id="exercises-container">
-                        <!-- Exercise rows will be added here by JavaScript -->
-                    </div>
+                    <div id="exercises-container"></div>
 
                     <button type="button" class="btn btn-outline-primary mb-3" onclick="addExercise()">
                         ➕ Add Exercise
                     </button>
 
-                    <button type="submit" class="btn btn-primary w-100">
-                        Save Workout 💾
-                    </button>
+                    <button type="submit" class="btn btn-primary w-100">Save Workout 💾</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ==================== JAVASCRIPT ==================== -->
 <script>
     let exerciseCount = 0;
-
     function addExercise() {
         exerciseCount++;
         const container = document.getElementById('exercises-container');
-
         const row = document.createElement('div');
         row.className = 'card mb-3 p-3 bg-light';
         row.innerHTML = `
@@ -82,7 +68,6 @@
                 <button type="button" class="btn btn-sm btn-outline-danger"
                         onclick="this.closest('.card').remove()">Remove ✖</button>
             </div>
-
             <div class="row">
                 <div class="col-md-4 mb-2">
                     <label class="form-label small">Exercise Name *</label>
@@ -118,8 +103,7 @@
         `;
         container.appendChild(row);
     }
-
-    // Start with one empty exercise row
     addExercise();
 </script>
+</div>
 {% endblock %}
