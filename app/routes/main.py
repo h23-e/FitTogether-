@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, send_from_directory, current_app
 from flask_login import current_user
 from app import db, Workout
 from datetime import datetime, timedelta
+import os
 
 bp = Blueprint('main', __name__)
 
@@ -73,4 +74,14 @@ def index():
         community_workouts=community_workouts,
         follower_count=current_user.followers.count(),
         following_count=current_user.following.count(),
+    )
+
+
+@bp.route('/service-worker.js')
+def service_worker():
+    """Serve the service worker at the root so it controls the whole app."""
+    return send_from_directory(
+        os.path.join(current_app.root_path, 'static'),
+        'service-worker.js',
+        mimetype='application/javascript'
     )
