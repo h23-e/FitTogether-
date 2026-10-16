@@ -252,10 +252,3 @@ text
 
 ---
 
-## ✅ **Now Push Everything**
-
-```powershell
-cd "D:\programming\side projects\FitTogether"
-git add .
-git commit -m "Phase 8.5: Portfolio-ready README with screenshots"
-git push
